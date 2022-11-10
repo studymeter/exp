@@ -1,10 +1,87 @@
+body {
+  height: 100vh !important;
+}
+
+#root {
+  height: 100%;
+}
+
 .App {
   text-align: center;
+  font-family: 'BIZ UDPGothic', sans-serif !important;
+  height: 100%;
+}
+
+.content {
+  max-width: 1100px !important;
+}
+
+h3 {
+  font-weight: bold !important;
+}
+
+.card {
+  border: 0px !important;
+}
+
+.headernav {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.hero-img {
+  max-width: 900px;
+  text-align: right !important;
+}
+
+.left-align {
+  text-align: left !important;
+}
+
+.text-big {
+  font-size: 3rem;
+  font-weight: bold;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: black;
+}
+
+.title-img {
+  max-width: 300px;
+}
+
+.lp-img {
+  width: 100%;
+  max-width: 500px;
+}
+
+.row-margin {
+  margin-bottom: 150px;
+}
+
+.title-button {
+  max-width: 500px;
+}
+
+Table {
+  text-align: left !important;
+}
+
+.nav-link {
+  color: black !important
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.form-check-input {
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+
+.form-check-input:checked {
+  background-color: #000 !important;
+  border-color: #000 !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {
