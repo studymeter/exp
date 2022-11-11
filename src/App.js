@@ -221,7 +221,8 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
   const submitBody = {
     to: document.getElementById("email").value,
     from: ca_name,
-    title: title,
+    chainName: cn,
+    title: exp_type,
     description: description
   };
   const body = JSON.stringify(submitBody);
@@ -556,7 +557,7 @@ function App() {
                         <tr>
                           <th>日付</th>
                           <th>受取者アドレス</th>
-                          <th>ジャンル</th>
+                          <th>証明すること</th>
                           <th>説明</th>
                         </tr>
                       </thead>
