@@ -74,19 +74,49 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
 
   const resNftData = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft?chain=${chainName}`, options);
   const resNft = await resNftData.json();
-  resNft.result.sort(compare);
 
   let nfts = [];
   for (let nft of resNft.result) {
     const tmp = JSON.parse(nft.metadata);
     if (tmp !== null) {
       if ("attributes" in tmp) {
-        nfts.push(JSON.parse(nft.metadata));
+        let cert_date = "";
+        let ca_name = "";
+        let ca_address = "";
+        let genre = "";
+        for (const attribute of tmp.attributes) {
+          if (attribute.trait_type === "exp_type") {
+            genre = attribute.value;
+          } else if (attribute.trait_type === "ca_name") {
+            ca_name = attribute.value;
+          } else if (attribute.trait_type === "ca_address") {
+            ca_address = attribute.value;
+          } else if (attribute.trait_type === "cert_date") {
+            cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
+          }
+        }
+
+        const nftinfo = {
+          cert_date: cert_date,
+          ca_name: ca_name,
+          ca_address: ca_address,
+          genre: genre,
+          description: tmp.description,
+          token_address: nft.token_address
+        }
+
+        nfts.push(nftinfo);
       }
     }
   }
 
-  setNfts(nfts);
+  setNfts(nfts.sort(( a, b ) => {
+    var r = 0;
+    if( a.cert_date > b.cert_date ){ r = -1; }
+    else if( a.cert_date < b.cert_date ){ r = 1; }
+  
+    return r;
+  }));
 
   const resCollectionData = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft/collections?chain=${chainName}`, options);
   const resCollection = await resCollectionData.json();
@@ -135,11 +165,42 @@ const handleCollectonSelect = async (chainName, setSelectedCollection, setSelect
     const tmp = JSON.parse(nft.metadata);
     if (tmp !== null) {
       if ("attributes" in tmp) {
-        nfts.push(JSON.parse(nft.metadata));
+        let cert_date = "";
+        let ca_name = "";
+        let owner_address = "";
+        let genre = "";
+        for (const attribute of tmp.attributes) {
+          if (attribute.trait_type === "exp_type") {
+            genre = attribute.value;
+          } else if (attribute.trait_type === "ca_name") {
+            ca_name = attribute.value;
+          } else if (attribute.trait_type === "owner_address") {
+            owner_address = attribute.value;
+          } else if (attribute.trait_type === "cert_date") {
+            cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
+          }
+        }
+
+        const nftinfo = {
+          cert_date: cert_date,
+          ca_name: ca_name,
+          owner_address: owner_address,
+          genre: genre,
+          description: tmp.description,
+          token_address: nft.token_address
+        }
+
+        nfts.push(nftinfo);
       }  
     }
   }
-  setMintedNfts(nfts);
+  setMintedNfts(nfts.sort(( a, b ) => {
+    var r = 0;
+    if( a.cert_date > b.cert_date ){ r = -1; }
+    else if( a.cert_date < b.cert_date ){ r = 1; }
+  
+    return r;
+  }));
 }
 
 const handleNewContract = async (account, chainName, setDisable, setCollections, setShowNewToken) => {
@@ -250,14 +311,6 @@ const handleLogout = async () => {
   window.location.href = "/";
 }
 
-const compare = async ( a, b ) => {
-  var r = 0;
-  if( a.last_metadata_sync < b.last_metadata_sync ){ r = -1; }
-  else if( a.last_metadata_sync > b.last_metadata_sync ){ r = 1; }
-
-  return r;
-}
-
 
 function App() {
   const [account, setAccount] = useState("");
@@ -305,43 +358,29 @@ function App() {
         {location === "/" ? (
           <>
             <Container className="my-5 p-5">
-              <img src={logoicon} className="title-img my-5" alt="logoicon"/>
+              <img src={logoicon} className="title-img mb-5" alt="logoicon"/>
               <h1 className="text-big mb-5">世界中の挑戦を<br />ブロックチェーンに記録</h1>
               <Row className="mx-auto row-margin title-button">
                 <Col sm={6} className="mb-3">
-                  <Button className="py-2 px-4" variant="dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
+                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
                 </Col>
                 <Col sm={6}>
-                  <Button className="py-2 px-4" variant="dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskと接続</Button>
+                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskと接続</Button>
                 </Col>
               </Row>
             </Container>
             <Container className="content">
-              {/* <Row className="align-items-center row-margin">
-                <Col sm={6} className="left-align p-3"> 
-                  <h1 className="text-big mb-5">Web3時代に、<br />履歴書はいらない。</h1>
-                  <Row className="mx-auto row-margin title-button">
-                    <Col sm={6} className="mb-3">
-                      <Button className="py-2 px-4" variant="dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
-                    </Col>
-                    <Col sm={6}>
-                      <Button className="py-2 px-4" variant="dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskと接続</Button>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col sm={6} className="p-3"><img src={logoicon} className="img-fluid lp-img"></img></Col>
-              </Row> */}
               <Row className="align-items-center row-margin">
                 <Col sm={5} className="p-5"><img src={about} className="img-fluid lp-img" alt="about"></img></Col>
                 <Col sm={7} className="left-align p-3"> 
                   <h1 className="text-big mb-5">Web3時代に、<br />証明書はいらない。</h1>
-                  <h4 className="mb-4">Qは、学校の卒業歴や社会活動への参加歴など、様々な経歴情報をブロックチェーンに記録できるシステムです。<br />人生を通じて挑戦・経験したことをNFTとして記録し、積み上げることで、学歴や保有資格だけでは測れなかった、その人の本当の魅力を可視化します。</h4>
+                  <h4 className="mb-4">Qは、学校の卒業歴や社会活動への参加歴など、様々な経歴情報をブロックチェーンに記録できるシステムです。<br />人生を通じて挑戦・経験したことをNFTの「証明トークン」に記録し、積み上げることで、学歴や保有資格だけでは測れなかった、その人の本当の魅力を可視化します。</h4>
                 </Col>
               </Row>
               <Row className="align-items-center row-margin">
                 <Col sm={7} className="left-align p-3"> 
                   <h1 className="text-big mb-5">誰でも贈り、受け取れる。</h1>
-                  <h4 className="mb-4">Qを使うと、誰でも証明書を発行したり、自分が受け取った証明書の一覧を見ることができます。<br />これからは、学校が発行する卒業証書だけではなく、仲間同士で感謝を伝え合ったり、自分自身の学習記録を残したりすることも、すべてあなたの経歴につながります。</h4>
+                  <h4 className="mb-4">Qを使うと、誰でも証明トークンを発行したり、自分が受け取った証明トークンの一覧を見ることができます。<br />これからは、学校が発行する卒業証書だけではなく、仲間同士で感謝を伝え合ったり、自分自身の学習記録を残したりすることも、すべてあなたの経歴につながります。</h4>
                 </Col>
                 <Col sm={5} className="p-3"><img src={about2} className="img-fluid lp-img" alt="about2"></img></Col>
               </Row>
@@ -350,7 +389,7 @@ function App() {
                 <Col sm={7} className="left-align p-3"> 
                   <h1 className="text-big mb-5">Qを集める冒険に出よう！</h1>
                   <h4 className="mb-4">証明書を発行したり、受け取ったりするためには、NFTを管理するためのウォレットアプリ「MetaMask」が必要です。<br />くわしいQのはじめかたは、マニュアルをご覧ください。</h4>
-                  <Button className="py-2 px-4" variant="dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
+                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
                 </Col>
               </Row>
             </Container>
@@ -410,7 +449,7 @@ function App() {
                       </Container>
                     </Navbar>
 
-                    <Table className="table-hover">
+                    <Table className="table-hover" responsive={true}>
                       <thead className="table-secondary">
                         <tr>
                           <th>日付</th>
@@ -422,37 +461,30 @@ function App() {
                       </thead>
                       <tbody>
                         {nfts.length !== 0 ? (nfts.map((nft, index) => {
-                          let cert_date = "";
-                          let ca_name = "";
-                          let ca_address = "";
-                          let genre = "";
-                          for (const attribute of nft.attributes) {
-                            if (attribute.trait_type === "exp_type") {
-                              genre = attribute.value;
-                            } else if (attribute.trait_type === "ca_name") {
-                              ca_name = attribute.value;
-                            } else if (attribute.trait_type === "ca_address") {
-                              ca_address = attribute.value;
-                            } else if (attribute.trait_type === "cert_date") {
-                              cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
-                            }
-                          }
                           return (
                             <tr key={index}>
-                              <td>{cert_date}</td>
-                              <td>{ca_name}</td>
+                              <td>{nft.cert_date}</td>
+                              <td>{nft.ca_name}</td>
                               <td>
-                                <OverlayTrigger
+                              <OverlayTrigger
                                   key="copy"
-                                  placement="right"
+                                  placement="top"
                                   overlay={
                                     <Tooltip>コピー</Tooltip>
                                   }
                                 >
-                                  <Button variant="outline-dark" size="sm" onClick={()=>{navigator.clipboard.writeText(ca_address);}}>{ca_address.substring(0,4)}...{ca_address.substring(38)}</Button>
+                                  <Button variant="text" size="sm" onClick={()=>{navigator.clipboard.writeText(nft.token_address);}}>
+                                    {nft.token_address.substring(0,4)}...{nft.token_address.substring(38)}
+                                    <span className="ms-2">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-clipboard" viewBox="0 0 16 16">
+                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                                      </svg>
+                                    </span>
+                                  </Button>
                                 </OverlayTrigger>
                               </td>
-                              <td>{genre}</td>
+                              <td>{nft.genre}</td>
                               <td>{nft.description}</td>
                             </tr>
                           );  
@@ -478,12 +510,12 @@ function App() {
                                 </Button>
                               </h3>
                             </div>
-                            <div><p><small>このウォレットで登録した発行者の一覧です。選択した発行者名で証明書を発行します。<br />※新しく登録した発行者が表示されない場合は、リロードボタンを押下してください。</small></p></div>
+                            <div><p><small>このウォレットで登録した発行者の一覧です。選択した発行者名で証明を発行します。<br />※新しく登録した発行者がブロックチェーンに記録されるまで数分かかる場合があります。リロードボタンを押下してください。</small></p></div>
                           </Stack>
                         </Nav>
                         <Nav className="justify-content-end">
                           {account === location.substring(1) ? (
-                            <Button className="px-4" variant="dark" onClick={handleShowNewToken}>発行者を登録する</Button>
+                            <Button className="px-4" variant="outline-dark" onClick={handleShowNewToken}>発行者を登録する</Button>
                           ) : (
                             <></>
                           )}
@@ -509,12 +541,20 @@ function App() {
                               <td>
                                 <OverlayTrigger
                                   key="copy"
-                                  placement="right"
+                                  placement="top"
                                   overlay={
                                     <Tooltip>コピー</Tooltip>
                                   }
                                 >
-                                  <Button variant="outline-dark" size="sm" onClick={()=>{navigator.clipboard.writeText(collection.token_address);}}>{collection.token_address.substring(0,4)}...{collection.token_address.substring(38)}</Button>
+                                  <Button variant="text" size="sm" onClick={()=>{navigator.clipboard.writeText(collection.token_address);}}>
+                                    {collection.token_address.substring(0,4)}...{collection.token_address.substring(38)}
+                                    <span className="ms-2">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-clipboard" viewBox="0 0 16 16">
+                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                                      </svg>
+                                    </span>
+                                  </Button>
                                 </OverlayTrigger>
                               </td>
                             </tr>
@@ -531,7 +571,7 @@ function App() {
                           <Stack className="left-align">
                             <div>
                               <h3>
-                                証明書を発行する
+                                証明を発行する
                                 <Button id="reloadCollection" className="mb-1" variant="text" onClick={() => handleCollectonSelect(chainName, setSelectedCollection, setSelectedCollectionName, setMintedNfts)}>
                                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                     <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -540,12 +580,12 @@ function App() {
                                 </Button>
                               </h3>
                             </div>
-                            <div><p><small>選択した発行者から証明書を発行し、相手のウォレットアドレスに送信します。<br />※新しく登録した証明書が表示されない場合は、リロードボタンを押下してください。</small></p></div>
+                            <div><p><small>選択した発行者から証明トークンを発行し、相手のウォレットアドレスに送信します。<br />※新しく登録した証明トークンがブロックチェーンに記録されるまで数分かかる場合があります。リロードボタンを押下してください。</small></p></div>
                           </Stack>
                         </Nav>
                         <Nav className="justify-content-end">
                           {selectedCollection !== "" ? (
-                            <Button className="px-4" variant="dark" onClick={handleShow} >証明書を発行する</Button>
+                            <Button className="px-4" variant="outline-dark" onClick={handleShow} >証明トークンを発行する</Button>
                           ) : (
                             <></>
                           )}
@@ -563,47 +603,32 @@ function App() {
                       </thead>
                       <tbody>
                         {mintedNfts.length !== 0 ? (mintedNfts.map((nft, index) => {
-                          let q_flg = false;
-                          let cert_date = "";
-                          let ca_address = "";
-                          let owner_address = "";
-                          let genre = "";
-                          for (const attribute of nft.attributes) {
-                            if (attribute.trait_type === "exp_type") {
-                              genre = attribute.value;
-                            } else if (attribute.trait_type === "ca_address") {
-                              ca_address = attribute.value;
-                              if (ca_address.toLowerCase() === account) {
-                                q_flg =true 
-                              }
-                            } else if (attribute.trait_type === "cert_date") {
-                              cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
-                            } else if (attribute.trait_type === "owner_address") {
-                              owner_address = attribute.value;
-                            }
-                          }
-                          if (q_flg === true){
-                            return (
-                              <tr key={index}>
-                                <td>{cert_date}</td>
-                                <td>
-                                  <OverlayTrigger
-                                    key="copy"
-                                    placement="right"
-                                    overlay={
-                                      <Tooltip>コピー</Tooltip>
-                                    }
-                                  >
-                                    <Button variant="outline-dark" size="sm" onClick={()=>{navigator.clipboard.writeText(owner_address);}}>{owner_address.substring(0,4)}...{owner_address.substring(38)}</Button>
-                                  </OverlayTrigger>
-                                </td>
-                                <td>{genre}</td>
-                                <td>{nft.description}</td>
-                              </tr>
-                            );  
-                          } else {
-                            return (<></>);
-                          }
+                          return (
+                            <tr key={index}>
+                              <td>{nft.cert_date}</td>
+                              <td>
+                                <OverlayTrigger
+                                  key="copy"
+                                  placement="top"
+                                  overlay={
+                                    <Tooltip>コピー</Tooltip>
+                                  }
+                                >
+                                  <Button variant="text" size="sm" onClick={()=>{navigator.clipboard.writeText(nft.owner_address);}}>
+                                    {nft.owner_address.substring(0,4)}...{nft.owner_address.substring(38)}
+                                    <span className="ms-2">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                                      </svg>
+                                    </span>
+                                  </Button>
+                                </OverlayTrigger>
+                              </td>
+                              <td>{nft.genre}</td>
+                              <td>{nft.description}</td>
+                            </tr>
+                          );  
                         })) : (
                           <></>
                         )}
@@ -670,7 +695,7 @@ function App() {
                       centered
                     >
                       <Modal.Header closeButton>
-                        <Modal.Title>新しい証明書を発行する</Modal.Title>
+                        <Modal.Title>新しい証明トークンを発行する</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <Form>
@@ -679,7 +704,7 @@ function App() {
                             <Form.Control id="ca_name" type="text" value={selectedCollectionName} readOnly={true} />
                           </Form.Group>
                           <Form.Group className="mb-3">
-                            <Form.Label>発行日（証明書NFT自体は、発行直後に送信されます）</Form.Label>
+                            <Form.Label>発行日（証明トークン自体は、発行直後に送信されます）</Form.Label>
                             <Form.Control id="cert_date" type="date" className="form-control datetimepicker-input" data-target="#datetimepicker1"/>
                           </Form.Group>
                           <Form.Group className="mb-3">
@@ -698,13 +723,13 @@ function App() {
                             <Form.Label>通知先メールアドレス</Form.Label>
                             <Form.Control id="email" type="email" placeholder="experience@studymeter-web.com" />
                             <Form.Text className="text-muted">
-                              証明書が発行されたことをメールで通知します。このメールアドレスは、NFTに記録されません。
+                              証明トークンが発行されたことをメールで通知します。このメールアドレスは、NFTに記録されません。
                             </Form.Text>
                           </Form.Group>
                         </Form>
                         <p><strong>ご確認ください</strong></p>
                         <ul>
-                          <li><small>発行した証明書の情報は、ブロックチェーン上で公開され、削除することができません。個人情報や機密情報を含めないよう、ご注意ください。</small></li>
+                          <li><small>通知先メールアドレス以外の情報は、ブロックチェーン上で公開され、削除することができません。個人情報や機密情報を含めないよう、ご注意ください。</small></li>
                           <li><small>発行ボタン押下後、MetaMaskの画面が開き、ブロックチェーンの利用手数料（ガス代）の支払いが発生します。</small></li>
                         </ul>
 
