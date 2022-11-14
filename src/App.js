@@ -360,7 +360,7 @@ function App() {
             <Container className="my-5 p-5">
               <img src={logoicon} className="title-img mb-5" alt="logoicon"/>
               <h1 className="text-big mb-5">世界中の挑戦を<br />ブロックチェーンに記録</h1>
-              <Row className="mx-auto row-margin title-button">
+              <Row className="mx-auto mb-3 title-button">
                 <Col sm={6} className="mb-3">
                   <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
                 </Col>
@@ -368,6 +368,7 @@ function App() {
                   <Button className="py-2 px-4 btn-lg" variant="outline-dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskと接続</Button>
                 </Col>
               </Row>
+              <small className="row-margin">Google ChromeとMetaMaskのインストールされたPCで利用可能です。</small>
             </Container>
             <Container className="content">
               <Row className="align-items-center row-margin">
