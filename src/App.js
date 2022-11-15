@@ -1,6 +1,6 @@
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { ethers } from "ethers"
+import { ethers } from "ethers";
 
 import './App.css';
 import { useEffect, useState } from 'react';
@@ -78,6 +78,7 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
   let nfts = [];
   for (let nft of resNft.result) {
     const tmp = JSON.parse(nft.metadata);
+    console.log(JSON.stringify(tmp));
     if (tmp !== null) {
       if ("attributes" in tmp) {
         let cert_date = "";
@@ -97,6 +98,7 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
         }
 
         const nftinfo = {
+          image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
           cert_date: cert_date,
           ca_name: ca_name,
           ca_address: ca_address,
@@ -182,6 +184,7 @@ const handleCollectonSelect = async (chainName, setSelectedCollection, setSelect
         }
 
         const nftinfo = {
+          image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
           cert_date: cert_date,
           ca_name: ca_name,
           owner_address: owner_address,
@@ -265,7 +268,7 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
   const metadata = {
     name: title,
     description: description,
-    image: "",
+    image: document.getElementById("image").files[0],
     attributes: [
       {trait_type:"cert_date",value: cert_date},
       {trait_type:"exp_type",value:exp_type},
@@ -459,6 +462,7 @@ function App() {
                     <Table className="table-hover" responsive={true}>
                       <thead className="table-secondary">
                         <tr>
+                          <th>画像</th>
                           <th>日付</th>
                           <th>発行者</th>
                           <th>発行者アドレス</th>
@@ -470,6 +474,7 @@ function App() {
                         {nfts.length !== 0 ? (nfts.map((nft, index) => {
                           return (
                             <tr key={index}>
+                              <td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="100px" /></a> : <></>}</td>
                               <td>{nft.cert_date}</td>
                               <td>{nft.ca_name}</td>
                               <td>
@@ -602,6 +607,7 @@ function App() {
                     <Table className="table-hover mb-5">
                       <thead className="table-secondary">
                         <tr>
+                          <th>画像</th>
                           <th>日付</th>
                           <th>受取者アドレス</th>
                           <th>証明すること</th>
@@ -612,6 +618,7 @@ function App() {
                         {mintedNfts.length !== 0 ? (mintedNfts.map((nft, index) => {
                           return (
                             <tr key={index}>
+                              <td><td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="100px" /></a> : <></>}</td></td>
                               <td>{nft.cert_date}</td>
                               <td>
                                 <OverlayTrigger
@@ -725,6 +732,10 @@ function App() {
                           <Form.Group className="mb-3">
                             <Form.Label>メッセージ</Form.Label>
                             <Form.Control id="description" type="text" placeholder="○○講座の受講、ありがとうございました！" />
+                          </Form.Group>
+                          <Form.Group className="mb-3">
+                            <Form.Label>画像</Form.Label>
+                            <Form.Control id="image" type="file" />
                           </Form.Group>
                           <Form.Group className="mb-3">
                             <Form.Label>通知先メールアドレス</Form.Label>
