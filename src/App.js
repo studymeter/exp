@@ -54,6 +54,7 @@ const getAccount = async () => {
 }
 
 const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, setCollections, setChainName) => {
+
   const account = await getAccount();
   setAccount(account);
 
@@ -352,6 +353,12 @@ function App() {
     if (typeof window.ethereum !== 'undefined') {
         window.ethereum.on("accountsChanged", (accountNo) => handleAccountChanged(accountNo, setAccount, setChainId, setNfts, setCollections,setChainName));
         window.ethereum.on("chainChanged", (accountNo) => handleAccountChanged(accountNo, setAccount, setChainId, setNfts, setCollections,setChainName));
+    } else {
+      window.addEventListener('ethereum#initialized', initializeAccount, {
+        once: true, 
+      });
+    
+      setTimeout(initializeAccount, 3000); // 3 seconds
     }
   }, [account]);
 
