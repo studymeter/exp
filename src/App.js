@@ -801,7 +801,7 @@ function App() {
                             <p>
                               <small>発行者</small><br />
                               {selectedNft.ca_name}
-                              <OverlayTrigger
+                              {/* <OverlayTrigger
                                 key="copy"
                                 placement="top"
                                 overlay={
@@ -817,10 +817,11 @@ function App() {
                                     </svg>
                                   </span>
                                 </Button>
-                              </OverlayTrigger>
+                              </OverlayTrigger> */}
                             </p>
                           </Col>
                         </Row>
+                        {/* <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a> */}
                         {/* <hr />
                         <p className="text-center mt-3 mb-0">
                           <Button className="text-danger" variant="link">
