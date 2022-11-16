@@ -33,6 +33,10 @@ h3 {
   text-align: right !important;
 }
 
+.detail-img {
+  max-height: 400px !important;
+}
+
 .left-align {
   text-align: left !important;
 }

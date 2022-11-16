@@ -99,6 +99,7 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
         }
 
         const nftinfo = {
+          name: tmp.name,
           image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
           cert_date: cert_date,
           ca_name: ca_name,
@@ -185,6 +186,7 @@ const handleCollectonSelect = async (chainName, setSelectedCollection, setSelect
         }
 
         const nftinfo = {
+          name: tmp.name,
           image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
           cert_date: cert_date,
           ca_name: ca_name,
@@ -324,7 +326,9 @@ function App() {
   const [disable, setDisable] = useState(false);
   const [show, setShow] = useState(false);
   const [showNewToken, setShowNewToken] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [nfts, setNfts] = useState([]);
+  const [selectedNft, setSelectedNft] = useState({});
   const [collections, setCollections] = useState([]);
   const [mintedNfts, setMintedNfts] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
@@ -336,7 +340,11 @@ function App() {
   const handleShow = () => setShow(true);
   const handleCloseNewToken = () => setShowNewToken(false);
   const handleShowNewToken = () => setShowNewToken(true);
-
+  const handleCloseDetail = () => setShowDetail(false);
+  const handleShowDetail = async (nft) => {
+    setSelectedNft(nft);
+    setShowDetail(true);
+  }
 
   // const handleSelect = (selectedIndex, e) => {
   //   setIndex(selectedIndex);
@@ -472,39 +480,21 @@ function App() {
                           <th>画像</th>
                           <th>日付</th>
                           <th>発行者</th>
-                          <th>発行者アドレス</th>
                           <th>証明すること</th>
                           <th>メッセージ</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
                         {nfts.length !== 0 ? (nfts.map((nft, index) => {
                           return (
-                            <tr key={index}>
-                              <td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="100px" /></a> : <></>}</td>
+                            <tr key={index} className="align-middle">
+                              <td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="70px" /></a> : <></>}</td>
                               <td>{nft.cert_date}</td>
                               <td>{nft.ca_name}</td>
-                              <td>
-                              <OverlayTrigger
-                                  key="copy"
-                                  placement="top"
-                                  overlay={
-                                    <Tooltip>コピー</Tooltip>
-                                  }
-                                >
-                                  <Button variant="text" size="sm" onClick={()=>{navigator.clipboard.writeText(nft.token_address);}}>
-                                    {nft.token_address.substring(0,4)}...{nft.token_address.substring(38)}
-                                    <span className="ms-2">
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-clipboard" viewBox="0 0 16 16">
-                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                                      </svg>
-                                    </span>
-                                  </Button>
-                                </OverlayTrigger>
-                              </td>
-                              <td>{nft.genre}</td>
+                              <td>{nft.name}</td>
                               <td>{nft.description}</td>
+                              <td><Button className="px-4" variant="outline-dark" onClick={() => handleShowDetail(nft)}>詳細</Button></td>
                             </tr>
                           );  
                         })) : (
@@ -624,8 +614,8 @@ function App() {
                       <tbody>
                         {mintedNfts.length !== 0 ? (mintedNfts.map((nft, index) => {
                           return (
-                            <tr key={index}>
-                              <td><td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="100px" /></a> : <></>}</td></td>
+                            <tr key={index} className="align-middle">
+                              <td><td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="70px" /></a> : <></>}</td></td>
                               <td>{nft.cert_date}</td>
                               <td>
                                 <OverlayTrigger
@@ -646,7 +636,7 @@ function App() {
                                   </Button>
                                 </OverlayTrigger>
                               </td>
-                              <td>{nft.genre}</td>
+                              <td>{nft.name}</td>
                               <td>{nft.description}</td>
                             </tr>
                           );  
@@ -783,6 +773,66 @@ function App() {
                         
                       </Modal.Footer>
                     </Modal>
+
+                    <Modal
+                      show={showDetail}
+                      backdrop="static"
+                      onHide={handleCloseDetail}
+                      size="md"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title>{selectedNft.name}</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <p className="text-center">
+                          {selectedNft.image !== "" ? <a href={selectedNft.image}  target="_blank" rel="noreferrer"><img src={selectedNft.image} className="detail-img" alt="nftimage" /></a> : <></>}
+                        </p>
+                        <p className="my-3"><small>メッセージ</small> <br /> {selectedNft.description}</p>
+                        <Row>
+                          <Col>
+                            <p>
+                              <small>証明日</small><br />
+                              {selectedNft.cert_date}
+                            </p>
+                          </Col>
+                          <Col>
+                            <p>
+                              <small>発行者</small><br />
+                              {selectedNft.ca_name}
+                              <OverlayTrigger
+                                key="copy"
+                                placement="top"
+                                overlay={
+                                  <Tooltip>コピー</Tooltip>
+                                }
+                              >
+                                <Button className="mt-1" variant="outline-dark" size="sm" onClick={()=>{navigator.clipboard.writeText(selectedNft.token_address);}}>
+                                  {selectedNft.token_address.substring(0,4)}...{selectedNft.token_address.substring(38)}
+                                  <span className="ms-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-clipboard" viewBox="0 0 16 16">
+                                      <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                                    </svg>
+                                  </span>
+                                </Button>
+                              </OverlayTrigger>
+                            </p>
+                          </Col>
+                        </Row>
+                        {/* <hr />
+                        <p className="text-center mt-3 mb-0">
+                          <Button className="text-danger" variant="link">
+                            証明書を削除する
+                          </Button>                        
+                        </p>
+                        <p className="text-center mt-0">
+                          <small>削除操作は取り消せません。また、ガス代の支払いが必要です。</small>
+                        </p> */}
+                      </Modal.Body>
+                    </Modal>
+
                   </Tab>
                 </Tabs>
               </Container>
