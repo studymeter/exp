@@ -493,7 +493,7 @@ function App() {
                               <td>{nft.cert_date}</td>
                               <td>{nft.ca_name}</td>
                               <td>{nft.name}</td>
-                              <td>{nft.description}</td>
+                              <td>{nft.description.length > 20 ? nft.description.substring(0, 20)+'...' : nft.description}</td>
                               <td><Button className="px-4" variant="outline-dark" onClick={() => handleShowDetail(nft)}>詳細</Button></td>
                             </tr>
                           );  
