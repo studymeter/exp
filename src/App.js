@@ -290,7 +290,8 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
     from: ca_name,
     chainName: cn,
     title: title,
-    description: description
+    description: description,
+    owner_address: owner
   };
   const body = JSON.stringify(submitBody);
 
