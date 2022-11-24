@@ -82,28 +82,28 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
     console.log(JSON.stringify(tmp));
     if (tmp !== null) {
       if ("attributes" in tmp) {
-        let cert_date = "";
-        let ca_name = "";
-        let ca_address = "";
+        let issue_date = "";
+        let issuer_name = "";
+        let issuer_address = "";
         let genre = "";
         for (const attribute of tmp.attributes) {
           if (attribute.trait_type === "exp_type") {
             genre = attribute.value;
-          } else if (attribute.trait_type === "ca_name") {
-            ca_name = attribute.value;
-          } else if (attribute.trait_type === "ca_address") {
-            ca_address = attribute.value;
-          } else if (attribute.trait_type === "cert_date") {
-            cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
+          } else if (attribute.trait_type === "ca_name" || attribute.trait_type === "issuer_name") {
+            issuer_name = attribute.value;
+          } else if (attribute.trait_type === "ca_address" || attribute.trait_type === "issuer_address") {
+            issuer_address = attribute.value;
+          } else if (attribute.trait_type === "cert_date" || attribute.trait_type === "issue_date") {
+            issue_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
           }
         }
 
         const nftinfo = {
           name: tmp.name,
           image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
-          cert_date: cert_date,
-          ca_name: ca_name,
-          ca_address: ca_address,
+          issue_date: issue_date,
+          issuer_name: issuer_name,
+          issuer_address: issuer_address,
           genre: genre,
           description: tmp.description,
           token_address: nft.token_address
@@ -116,8 +116,8 @@ const handleAccountChanged = async (accountNo, setAccount, setChainId, setNfts, 
 
   setNfts(nfts.sort(( a, b ) => {
     var r = 0;
-    if( a.cert_date > b.cert_date ){ r = -1; }
-    else if( a.cert_date < b.cert_date ){ r = 1; }
+    if( a.issue_date > b.issue_date ){ r = -1; }
+    else if( a.issue_date < b.issue_date ){ r = 1; }
   
     return r;
   }));
@@ -169,27 +169,27 @@ const handleCollectonSelect = async (chainName, setSelectedCollection, setSelect
     const tmp = JSON.parse(nft.metadata);
     if (tmp !== null) {
       if ("attributes" in tmp) {
-        let cert_date = "";
-        let ca_name = "";
+        let issue_date = "";
+        let issuer_name = "";
         let owner_address = "";
         let genre = "";
         for (const attribute of tmp.attributes) {
           if (attribute.trait_type === "exp_type") {
             genre = attribute.value;
-          } else if (attribute.trait_type === "ca_name") {
-            ca_name = attribute.value;
+          } else if (attribute.trait_type === "ca_name" || attribute.trait_type === "issuer_name") {
+            issuer_name = attribute.value;
           } else if (attribute.trait_type === "owner_address") {
             owner_address = attribute.value;
-          } else if (attribute.trait_type === "cert_date") {
-            cert_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
+          } else if (attribute.trait_type === "cert_date" || attribute.trait_type === "issue_date") {
+            issue_date = attribute.value.substring(0,4) + "/" +  attribute.value.substring(4,6) + "/" + attribute.value.substring(6);
           }
         }
 
         const nftinfo = {
           name: tmp.name,
           image: tmp.image !== "" ? `https://ipfs.io/ipfs/${tmp.image.substring(7)}` : "",
-          cert_date: cert_date,
-          ca_name: ca_name,
+          issue_date: issue_date,
+          issuer_name: issuer_name,
           owner_address: owner_address,
           genre: genre,
           description: tmp.description,
@@ -202,8 +202,8 @@ const handleCollectonSelect = async (chainName, setSelectedCollection, setSelect
   }
   setMintedNfts(nfts.sort(( a, b ) => {
     var r = 0;
-    if( a.cert_date > b.cert_date ){ r = -1; }
-    else if( a.cert_date < b.cert_date ){ r = 1; }
+    if( a.issue_date > b.issue_date ){ r = -1; }
+    else if( a.issue_date < b.issue_date ){ r = 1; }
   
     return r;
   }));
@@ -253,10 +253,10 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
   }
 
   const account = await getAccount();
-  const cert_date = document.getElementById("cert_date").value.replace(/[^0-9]/g, "");
+  const issue_date = document.getElementById("issue_date").value.replace(/[^0-9]/g, "");
   const owner = document.getElementById("owner").value;
   const title = document.getElementById("exp_type").value;
-  const ca_name = document.getElementById("ca_name").value;
+  const issuer_name = document.getElementById("issuer_name").value;
   const exp_type = document.getElementById("exp_type").value;
   const description = document.getElementById("description").value;
   
@@ -273,10 +273,10 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
     description: description,
     image: document.getElementById("image").files[0],
     attributes: [
-      {trait_type:"cert_date",value: cert_date},
+      {trait_type:"issue_date",value: issue_date},
       {trait_type:"exp_type",value:exp_type},
-      {trait_type:"ca_address",value:account},
-      {trait_type:"ca_name","value":ca_name},
+      {trait_type:"issuer_address",value:account},
+      {trait_type:"issuer_name","value":issuer_name},
       {trait_type:"owner_address","value":owner},
     ]
   };
@@ -287,7 +287,7 @@ const handleMint = async (selectedCollection, chainName, setDisable, setMintedNf
   const method = 'POST';
   const submitBody = {
     to: document.getElementById("email").value,
-    from: ca_name,
+    from: issuer_name,
     chainName: cn,
     title: title,
     description: description,
@@ -491,8 +491,8 @@ function App() {
                           return (
                             <tr key={index} className="align-middle">
                               <td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="70px" /></a> : <></>}</td>
-                              <td>{nft.cert_date}</td>
-                              <td>{nft.ca_name}</td>
+                              <td>{nft.issue_date}</td>
+                              <td>{nft.issuer_name}</td>
                               <td>{nft.name}</td>
                               <td>{nft.description.length > 20 ? nft.description.substring(0, 20)+'...' : nft.description}</td>
                               <td><Button className="px-4" variant="outline-dark" onClick={() => handleShowDetail(nft)}>詳細</Button></td>
@@ -617,7 +617,7 @@ function App() {
                           return (
                             <tr key={index} className="align-middle">
                               <td><td>{nft.image !== "" ? <a href={nft.image}  target="_blank" rel="noreferrer"><img src={nft.image} alt="nftimage" width="70px" /></a> : <></>}</td></td>
-                              <td>{nft.cert_date}</td>
+                              <td>{nft.issue_date}</td>
                               <td>
                                 <OverlayTrigger
                                   key="copy"
@@ -713,11 +713,11 @@ function App() {
                         <Form>
                           <Form.Group className="mb-3">
                             <Form.Label>発行者名</Form.Label>
-                            <Form.Control id="ca_name" type="text" value={selectedCollectionName} readOnly={true} />
+                            <Form.Control id="issuer_name" type="text" value={selectedCollectionName} readOnly={true} />
                           </Form.Group>
                           <Form.Group className="mb-3">
                             <Form.Label>発行日（証明トークン自体は、発行直後に送信されます）</Form.Label>
-                            <Form.Control id="cert_date" type="date" className="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                            <Form.Control id="issue_date" type="date" className="form-control datetimepicker-input" data-target="#datetimepicker1"/>
                           </Form.Group>
                           <Form.Group className="mb-3">
                             <Form.Label>受取者のウォレットアドレス</Form.Label>
@@ -795,13 +795,13 @@ function App() {
                           <Col>
                             <p>
                               <small>証明日</small><br />
-                              {selectedNft.cert_date}
+                              {selectedNft.issue_date}
                             </p>
                           </Col>
                           <Col>
                             <p>
                               <small>発行者</small><br />
-                              {selectedNft.ca_name}
+                              {selectedNft.issuer_name}
                             </p>
                           </Col>
                         </Row>
