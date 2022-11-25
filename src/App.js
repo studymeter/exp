@@ -379,15 +379,9 @@ function App() {
             <Container className="my-5 p-5">
               <img src={logoicon} className="title-img mb-5" alt="logoicon"/>
               <h1 className="text-big mb-5">世界中の挑戦を<br />ブロックチェーンに記録</h1>
-              <Row className="mx-auto mb-3 title-button">
-                <Col sm={6} className="mb-3">
-                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
-                </Col>
-                <Col sm={6}>
-                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskと接続</Button>
-                </Col>
-              </Row>
-              <small className="row-margin">Google ChromeとMetaMaskのインストールされたPCで利用可能です。</small>
+              <Button className="py-2 px-4 btn-lg" variant="outline-dark" id="GetAccountButton" onClick={initializeAccount}>MetaMaskに接続</Button>
+              <br />
+              <small className="mt-5">Google ChromeとMetaMaskのインストールされたPCで利用可能です。</small>
             </Container>
             <Container className="content">
               <Row className="align-items-center row-margin">
@@ -408,8 +402,13 @@ function App() {
                 <Col sm={5} className="p-3"><img src={metamask} alt="metamask"></img></Col>
                 <Col sm={7} className="left-align p-3"> 
                   <h1 className="text-big mb-5">Qを集める冒険に出よう！</h1>
-                  <h4 className="mb-4">証明書を発行したり、受け取ったりするためには、NFTを管理するためのウォレットアプリ「MetaMask」が必要です。<br />くわしいQのはじめかたは、マニュアルをご覧ください。</h4>
-                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">使い方を見る</Button>
+                  <h4 className="mb-4">証明書を発行したり、受け取ったりするためには、NFTを管理するためのウォレットアプリ「MetaMask」が必要です。<br />くわしいQのはじめかたは、Discordのコミュニティで紹介しています。</h4>
+                  <Button className="py-2 px-4 btn-lg" variant="outline-dark" href="https://discord.gg/mvWHWKhNgr" target="_blank" rel="noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-discord" viewBox="0 0 16 16">
+                      <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+                    </svg>
+                    　コミュニティに参加
+                  </Button>
                 </Col>
               </Row>
             </Container>
@@ -427,7 +426,7 @@ function App() {
                   </Nav>
                   <Nav>
                     <Navbar.Text>
-                      <Button id="openhelp" className="mb-1 me-2" variant="text" href="https://gainful-dinghy-88c.notion.site/Q-07aae2e74e65451eb0c7ad7ce9fd85c8" target="_blank" rel="noreferrer">
+                      <Button id="openhelp" className="mb-1 me-2" variant="text" href="https://discord.gg/mvWHWKhNgr" target="_blank" rel="noreferrer">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-question-circle" viewBox="0 0 16 16">
                           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                           <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
@@ -853,7 +852,13 @@ function App() {
             </ThirdwebProvider>
           </>
         )}
-        
+        <Button className="bottomright" variant="text" href="https://discord.gg/mvWHWKhNgr" target="_blank" rel="noreferrer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" className="bi bi-discord" viewBox="0 0 16 16">
+            <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+          </svg>
+          <br />
+          <small className="icontitle">コミュニティに参加</small>
+        </Button>
       </div>  
 
       <footer className="mt-auto p-3">
